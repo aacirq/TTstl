@@ -1,9 +1,9 @@
 //
-// Created by renxin on 2021/1/3.
+// Created by aacirq.
 //
 
-#ifndef TTALGORITHM_BST_H
-#define TTALGORITHM_BST_H
+#ifndef TTSTL_BST_H
+#define TTSTL_BST_H
 
 #include <iostream>
 
