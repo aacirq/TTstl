@@ -19,3 +19,9 @@ target_include_directories(test_list
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/include
 )
+
+add_executable(test_deque test/test_deque.cpp)
+target_include_directories(test_deque
+    PRIVATE 
+        ${PROJECT_SOURCE_DIR}/include
+)

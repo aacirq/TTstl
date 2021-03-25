@@ -7,6 +7,8 @@
 #include "type_traits.h"
 #include "stl_construct.h"
 
+// TODO 重新看一遍copy_backward()，保证是逆着复制的，这样能够防止存在overlap的时候的复制。
+
 namespace tt {
 
     /* ========== fill ========== */
