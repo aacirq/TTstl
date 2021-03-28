@@ -15,30 +15,30 @@ namespace tt {
         T data;
     };
 
-    template <class T, class Ref, class Ptr> // TODO 为什么设置Ref和Ptr模板呢？
+    template <class T, class Ref, class Ptr>
     struct _list_iterator {
         typedef _list_iterator<T, T&, T*>   iterator;
         typedef _list_iterator<T, Ref, Ptr> self;
 
-        typedef bidirectional_iterator_tag iterator_category;
-        typedef T              value_type;
-        typedef T &            reference;
-        typedef T *            pointer;
-        typedef ptrdiff_t      difference_type;
-        typedef size_t         size_type;
-        typedef _list_node<T>* link_type;
+        typedef bidirectional_iterator_tag  iterator_category;
+        typedef T                           value_type;
+        typedef Ref                         reference;
+        typedef Ptr                         pointer;
+        typedef ptrdiff_t                   difference_type;
+        typedef size_t                      size_type;
+        typedef _list_node<T>*              link_type;
 
         link_type node;
 
         _list_iterator() {}
         _list_iterator(link_type x) : node(x) {}
-        _list_iterator(const iterator &x) : node(x.node) {}
+        _list_iterator(const iterator &x) : node(x.node) {} // TODO 这里为什么用iterator不用self
 
         bool operator == (const self &rhs) const { return node == rhs.node; }
         bool operator != (const self &rhs) const { return node != rhs.node; }
 
         reference operator * () { return node->data; }
-        pointer operator -> () { return &(operator*()); } // TODO 再理解一下这里
+        pointer operator -> () { return &(operator*()); }
         self & operator ++ () {
             node = node->next;
             return *this;
@@ -62,16 +62,17 @@ namespace tt {
     template <class T, class Alloc = alloc>
     class list {
     protected:
-        typedef _list_node<T> list_node;
-        typedef simple_alloc<list_node, Alloc> list_node_allocator;
+        typedef _list_node<T>                   list_node;
+        typedef simple_alloc<list_node, Alloc>  list_node_allocator;
 
     public:
-        typedef list_node*                 link_type;
-        typedef _list_iterator<T, T&, T*>  iterator;
-        typedef size_t                     size_type;
-        typedef T&                         reference;
-        typedef T                          value_type; // TODO 需要核对
-        typedef const T&                   const_reference; // TODO 不确定，需要确认
+        typedef T                                     value_type;
+        typedef size_t                                size_type;
+        typedef T&                                    reference;
+        typedef const T&                              const_reference;
+        typedef _list_iterator<T, T&, T*>             iterator;
+        typedef _list_iterator<T, const T&, const T*> const_iterator;
+        typedef list_node*                            link_type;
 
     protected:
         link_type node;
@@ -91,16 +92,33 @@ namespace tt {
 
     public:
         iterator begin() { return iterator(node->next); }
+        const_iterator begin() const { return const_iterator(node->next); }
         iterator end() { return iterator(node); }
+        const_iterator end() const { return const_iterator(node); }
         bool empty() const { return node->next == node; }
         size_type size() const { return distance(iterator(node->next), iterator(node)); } // 解决const问题，begin()和end()无法在const对象中使用
         // 取最前面的元素data
         reference front() { return *begin(); }
+        const_reference front() const { return *begin(); }
         // 取最后面的元素data
-        reference back() { return *end(); }
+        reference back() { return *(--end()); }
+        const_reference back() const { *(--end()); }
 
     public:
         list() { empty_initialize(); }
+        ~list() {
+            clear();
+            destroy_node(node);
+        }
+
+        void push_front(const T &x) { insert(begin(), x); }
+        void push_back(const T &x) { insert(end(), x); }
+
+        void pop_front() { erase(begin()); }
+        void pop_back() {
+            iterator tmp = end();
+            erase(--tmp);
+        }
 
         iterator insert(iterator position, const T &x) {
             link_type new_node = create_node(x);
@@ -111,9 +129,6 @@ namespace tt {
             return iterator(new_node);
         }
 
-        void push_front(const T &x) { insert(begin(), x); }
-        void push_back(const T &x) { insert(end(), x); }
-
         iterator erase(iterator position) {
             link_type prev_node = position.node->prev;
             link_type next_node = position.node->next;
@@ -121,12 +136,6 @@ namespace tt {
             next_node->prev = prev_node;
             destroy_node(position.node);
             return iterator(next_node);
-        }
-
-        void pop_front() { erase(begin()); }
-        void pop_back() {
-            iterator tmp = end();
-            erase(--tmp);
         }
 
         // 清除所有结点
