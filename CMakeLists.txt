@@ -28,6 +28,10 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
 cmake_minimum_required(VERSION 3.15)
 project(tt_stl)
 
+# Test of test/complex_class.h
+add_executable(test_complex_class test/test_complex_class.cpp)
+target_link_libraries(test_complex_class gtest_main)
+
 # Test of include/stl_algobase.h
 add_executable(test_algobase test/test_algobase.cpp)
 target_include_directories(test_algobase
@@ -35,7 +39,6 @@ target_include_directories(test_algobase
         ${PROJECT_SOURCE_DIR}/include
 )
 target_link_libraries(test_algobase gtest_main)
-add_test(NAME TEST_STL COMMAND test_algobase)
 
 # Test of include/stl_vector.h
 add_executable(test_vector test/test_vector.cpp)
@@ -44,7 +47,6 @@ target_include_directories(test_vector
         ${PROJECT_SOURCE_DIR}/include
 )
 target_link_libraries(test_vector gtest_main)
-add_test(NAME TEST_STL COMMAND test_vector)
 
 # Test of include/stl_list.h
 add_executable(test_list test/test_list.cpp)
@@ -53,7 +55,6 @@ target_include_directories(test_list
         ${PROJECT_SOURCE_DIR}/include
 )
 target_link_libraries(test_list gtest_main)
-add_test(NAME TEST_STL COMMAND test_list)
 
 # Test of include/stl_deque.h
 add_executable(test_deque test/test_deque.cpp)
@@ -62,7 +63,6 @@ target_include_directories(test_deque
         ${PROJECT_SOURCE_DIR}/include
 )
 target_link_libraries(test_deque gtest_main)
-add_test(NAME TEST_STL COMMAND test_deque)
 
 # Test of include/stl_stack.h
 add_executable(test_stack test/test_stack.cpp)
@@ -71,4 +71,8 @@ target_include_directories(test_stack
         ${PROJECT_SOURCE_DIR}/include
 )
 target_link_libraries(test_stack gtest_main)
-add_test(NAME TEST_STL COMMAND test_stack)
+
+add_test(
+    NAME TEST_STL 
+    COMMAND test_complex_class test_algobase test_vector test_list test_deque test_stack
+)
