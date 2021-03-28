@@ -156,6 +156,8 @@ namespace tt {
         bool empty() const { return start == finish; }
 
     public:
+        // TODO 补充默认构造函数
+
         deque(int n, const value_type &x) : start(), finish(), map(0), map_size(0) {
             fill_initialization(n, x);
         }

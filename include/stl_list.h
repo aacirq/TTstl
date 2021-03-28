@@ -70,6 +70,8 @@ namespace tt {
         typedef _list_iterator<T, T&, T*>  iterator;
         typedef size_t                     size_type;
         typedef T&                         reference;
+        typedef T                          value_type; // TODO 需要核对
+        typedef const T&                   const_reference; // TODO 不确定，需要确认
 
     protected:
         link_type node;
@@ -123,7 +125,7 @@ namespace tt {
 
         void pop_front() { erase(begin()); }
         void pop_back() {
-            link_type tmp = end();
+            iterator tmp = end();
             erase(--tmp);
         }
 
