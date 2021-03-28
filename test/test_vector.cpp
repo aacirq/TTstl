@@ -6,7 +6,6 @@
 #include "stl_vector.h"
 #include "complex_class.h"
 
-using std::cout; using std::endl;
 using std::string;
 
 using tt::vector;
