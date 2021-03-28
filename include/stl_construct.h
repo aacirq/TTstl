@@ -24,7 +24,7 @@ namespace tt {
     inline void 
     _destroy_aux(ForwardIterator first, ForwardIterator last, _false_type) {
         for (; first != last; ++first) {
-            destroy(*first);
+            destroy(&*first);
         }
     }
 

@@ -18,6 +18,8 @@ namespace tt {
         typedef T&         reference;
         typedef size_t     size_type;
         typedef ptrdiff_t  difference_type;
+        typedef const T*   const_iterator;
+        typedef const T&   const_reference;
 
     protected:
         typedef simple_alloc<T, Alloc> data_allocator;
@@ -37,13 +39,6 @@ namespace tt {
         }
 
     public:
-        iterator begin() { return start; }
-        iterator end() { return finish; }
-        size_type size() const { return size_type(finish - start); }
-        size_type capacity() const { return size_type(end_of_storge - start); }
-        bool empty() const { return start == finish; }
-        reference operator[] (size_type n) { return *(begin() + n); }
-
         vector() : start(0), finish(0), end_of_storge(0) {}
         vector(size_type n, const T &value) { fill_initialize(n, value); }
         vector(int n, const T &value) { fill_initialize(static_cast<size_type>(n), value); }
@@ -55,8 +50,18 @@ namespace tt {
             deallocate();
         }
 
+        iterator begin() { return start; }
+        const_iterator begin() const { return start; }
+        iterator end() { return finish; }
+        const_iterator end() const { return finish; }
+        size_type size() const { return size_type(finish - start); }
+        size_type capacity() const { return size_type(end_of_storge - start); }
+        bool empty() const { return start == finish; }
         reference front() { return *begin(); }
+        const_reference front() const { return *begin(); }
         reference back() { return *(end() - 1); }
+        const_reference back() const { return *(end() - 1); }
+        reference operator[] (size_type n) { return *(begin() + n); }
 
         void push_back(const T &x) {
             if (finish != end_of_storge) {
@@ -88,7 +93,7 @@ namespace tt {
         }
 
         void insert(iterator position, const T &x) {
-
+            insert(position, 1, x);
         }
 
         void insert(iterator position, size_type n, const T &x);
