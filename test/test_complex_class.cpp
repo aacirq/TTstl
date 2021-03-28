@@ -53,9 +53,13 @@ TEST(ComplexClassTest, EqualOperator) {
     ComplexClass c1(2, 2.22, "abcde", ch1);
     ComplexClass c2(2, 2.22, "abcde", ch2);
     ComplexClass c3(2, 2.22, "abcde", ch1);
+    ComplexClass c4(2, 2.22, "abcde", nullptr);
+    ComplexClass c5(2, 2.22, "abcde", nullptr);
     EXPECT_NE(c1, c2);
     EXPECT_EQ(c1, c3);
     EXPECT_NE(c1.c, c3.c);
+    EXPECT_NE(c3, c4);
+    EXPECT_EQ(c4, c5);
 
     const ComplexClass cc1(2, 2.22, "abcde", ch1);
     const ComplexClass cc2(2, 2.22, "abcde", ch2);
