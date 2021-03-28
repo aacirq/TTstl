@@ -127,6 +127,7 @@ namespace tt {
         typedef _deque_iterator<T, T&, T*, BufSiz>  iterator;
         typedef typename iterator::difference_type  difference_type;
         typedef typename iterator::reference        reference;
+        typedef typename iterator::const_iterator::reference const_reference;
     
     protected:
         typedef pointer_type*  map_pointer;
