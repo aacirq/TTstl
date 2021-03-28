@@ -1,33 +1,74 @@
-cmake_minimum_required(VERSION 3.15)
+# Download and unpack googletest at configure time
+configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
+execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+  RESULT_VARIABLE result
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
+if(result)
+  message(FATAL_ERROR "CMake step for googletest failed: ${result}")
+endif()
+execute_process(COMMAND ${CMAKE_COMMAND} --build .
+  RESULT_VARIABLE result
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
+if(result)
+  message(FATAL_ERROR "Build step for googletest failed: ${result}")
+endif()
 
+# Prevent overriding the parent project's compiler/linker
+# settings on Windows
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+# Add googletest directly to our build. This defines
+# the gtest and gtest_main targets.
+add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
+                 ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
+                 EXCLUDE_FROM_ALL)
+
+# Now simply link against gtest or gtest_main as needed. Eg
+
+cmake_minimum_required(VERSION 3.15)
 project(tt_stl)
 
+# Test of include/stl_algobase.h
 add_executable(test_algobase test/test_algobase.cpp)
 target_include_directories(test_algobase
     PRIVATE 
-        ${PROJECT_SOURCE_DIR}/include)
+        ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(test_algobase gtest_main)
+add_test(NAME TEST_STL COMMAND test_algobase)
 
-
+# Test of include/stl_vector.h
 add_executable(test_vector test/test_vector.cpp)
 target_include_directories(test_vector
     PRIVATE 
-        ${PROJECT_SOURCE_DIR}/include)
+        ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(test_vector gtest_main)
+add_test(NAME TEST_STL COMMAND test_vector)
 
-
+# Test of include/stl_list.h
 add_executable(test_list test/test_list.cpp)
 target_include_directories(test_list
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/include
 )
+target_link_libraries(test_list gtest_main)
+add_test(NAME TEST_STL COMMAND test_list)
 
+# Test of include/stl_deque.h
 add_executable(test_deque test/test_deque.cpp)
 target_include_directories(test_deque
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/include
 )
+target_link_libraries(test_deque gtest_main)
+add_test(NAME TEST_STL COMMAND test_deque)
 
+# Test of include/stl_stack.h
 add_executable(test_stack test/test_stack.cpp)
 target_include_directories(test_stack
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/include
 )
+target_link_libraries(test_stack gtest_main)
+add_test(NAME TEST_STL COMMAND test_stack)
