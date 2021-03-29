@@ -108,7 +108,8 @@ namespace tt {
         list() { empty_initialize(); }
         ~list() {
             clear();
-            destroy_node(node);
+            put_node(node);
+            // destroy_node(node);
         }
 
         void push_front(const T &x) { insert(begin(), x); }
