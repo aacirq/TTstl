@@ -72,6 +72,14 @@ target_include_directories(test_stack
 )
 target_link_libraries(test_stack gtest_main)
 
+# Test of include/stl_squeue.h
+add_executable(test_queue test/test_queue.cpp)
+target_include_directories(test_queue
+    PRIVATE 
+        ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(test_queue gtest_main)
+
 add_test(
     NAME TEST_STL 
     COMMAND test_complex_class test_algobase test_vector test_list test_deque test_stack
