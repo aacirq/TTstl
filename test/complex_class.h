@@ -57,7 +57,7 @@ private:
             c = nullptr;
         }
         if (src == nullptr) return;
-        size_t sz = strlen(src);
+        size_t sz = strlen(src) + 1;
         c = new char[sz];
         strcpy(c, src);
     }
