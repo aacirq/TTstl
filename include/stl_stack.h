@@ -39,5 +39,4 @@ namespace tt {
 
 }
 
-
 #endif /* TTSTL_STL_STACK_H */
