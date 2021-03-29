@@ -19,14 +19,10 @@ TEST(Stack, General) {
     ASSERT_EQ(istack.size(), 5);
     ASSERT_EQ(istack.top(), 4);
 
-    istack.pop();
-    EXPECT_EQ(istack.top(), 3);
-    istack.pop();
-    EXPECT_EQ(istack.top(), 2);
-    istack.pop();
-    EXPECT_EQ(istack.top(), 1);
-    istack.pop();
-    EXPECT_EQ(istack.top(), 0);
+    for (int i = 3; i >= 0; --i) {
+        istack.pop();
+        EXPECT_EQ(istack.top(), i);
+    }
 
     ASSERT_EQ(istack.size(), 1);
 
@@ -43,14 +39,10 @@ TEST(Stack, ByTTList) {
     ASSERT_EQ(istack.size(), 5);
     ASSERT_EQ(istack.top(), 4);
 
-    istack.pop();
-    EXPECT_EQ(istack.top(), 3);
-    istack.pop();
-    EXPECT_EQ(istack.top(), 2);
-    istack.pop();
-    EXPECT_EQ(istack.top(), 1);
-    istack.pop();
-    EXPECT_EQ(istack.top(), 0);
+    for (int i = 3; i >= 0; --i) {
+        istack.pop();
+        EXPECT_EQ(istack.top(), i);
+    }
 
     ASSERT_EQ(istack.size(), 1);
 
@@ -67,14 +59,10 @@ TEST(Stack, ByStdList) {
     ASSERT_EQ(istack.size(), 5);
     ASSERT_EQ(istack.top(), 4);
 
-    istack.pop();
-    EXPECT_EQ(istack.top(), 3);
-    istack.pop();
-    EXPECT_EQ(istack.top(), 2);
-    istack.pop();
-    EXPECT_EQ(istack.top(), 1);
-    istack.pop();
-    EXPECT_EQ(istack.top(), 0);
+    for (int i = 3; i >= 0; --i) {
+        istack.pop();
+        EXPECT_EQ(istack.top(), i);
+    }
 
     ASSERT_EQ(istack.size(), 1);
 
