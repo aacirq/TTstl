@@ -197,17 +197,17 @@ namespace tt {
         node->next = node;
         node->prev = node;
     }
-    
+
     template <class T, class Alloc>
     void list<T, Alloc>::remove(const T &value) {
         iterator cur = begin();
         iterator last = end();
         while (cur != last) {
-            iterator tmp = cur;
-            ++tmp;
-            if (*tmp == value)
-                erase(tmp);
-            cur = tmp;
+            if (*cur == value) {
+                cur = erase(cur);
+            } else {
+                ++cur;
+            }
         }
     }
     

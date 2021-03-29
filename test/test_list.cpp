@@ -76,7 +76,7 @@ TEST(List, Insert) {
             EXPECT_EQ(*itr++, i + n*100);
         }
         ASSERT_NE(itr, l.end());
-        EXPECT_EQ(*itr, 2222);
+        EXPECT_EQ(*itr++, 2222);
     }
     for (int i = 0; i < 100; ++i) {
         ASSERT_NE(itr, l.end());
@@ -128,7 +128,7 @@ TEST(List, Clear) {
     ASSERT_EQ(l.size(), 0);
 }
 
-TEST(List, remove) {
+TEST(List, Remove) {
     list<int> l;
     for (int i = 0; i < 500; ++i) {
         l.push_back(i);
@@ -210,7 +210,7 @@ TEST(List, Merge) {
     auto itr = l1.begin();
     for (int i = 0; i < 200; ++i) {
         ASSERT_NE(itr, l1.end());
-        EXPECT_EQ(*itr, i);
+        EXPECT_EQ(*itr++, i);
     }
     ASSERT_EQ(itr, l1.end());
 }
@@ -248,14 +248,14 @@ TEST(List, Transfer) {
     for (int i = 100; i < 200; ++i) {
         l2.push_back(i);
     }
-    auto itr2 = l2.begin();
-    advance(itr2, 49);
     auto itr1 = l1.begin();
     advance(itr1, 50);
+    auto itr2 = l2.begin();
+    advance(itr2, 50);
     l1.transfer(itr1, l2.begin(), itr2);
 
-    ASSERT_NE(l1.size(), 150);
-    ASSERT_NE(l2.size(), 50);
+    ASSERT_EQ(l1.size(), 150);
+    ASSERT_EQ(l2.size(), 50);
     itr1 = l1.begin();
     for (int i = 0; i < 50; ++i) {
         ASSERT_NE(itr1, l1.end());
@@ -312,9 +312,80 @@ TEST(List, Splice1) {
 }
 
 TEST(List, Splice2) {
-    
+    list<int> l1;
+    for (int i = 0; i < 100; ++i) {
+        l1.push_back(i);
+    }
+    for (int i = 200; i < 300; ++i) {
+        l1.push_back(i);
+    }
+
+    list<int> l2;
+    for (int i = 0; i < 200; ++i) {
+        l2.push_back(i);
+    }
+
+    auto itr1 = l1.begin();
+    advance(itr1, 100);
+    auto itr2 = l2.begin();
+    advance(itr2, 100);
+    l1.splice(itr1, l2, itr2);
+
+    ASSERT_EQ(l1.size(), 201);
+    ASSERT_EQ(l2.size(), 199);
+
+    itr1 = l1.begin();
+    for (int i = 0; i < 101; ++i) {
+        ASSERT_NE(itr1, l1.end());
+        EXPECT_EQ(*itr1++, i);
+    }
+    for (int i = 200; i < 300; ++i) {
+        ASSERT_NE(itr1, l1.end());
+        EXPECT_EQ(*itr1++, i);
+    }
+    ASSERT_EQ(itr1, l1.end());
+
+    itr2 = l2.begin();
+    for (int i = 0; i < 100; ++i) {
+        ASSERT_NE(itr2, l2.end());
+        EXPECT_EQ(*itr2++, i);
+    }
+    for (int i = 101; i < 200; ++i) {
+        ASSERT_NE(itr2, l2.end());
+        EXPECT_EQ(*itr2++, i);
+    }
+    ASSERT_EQ(itr2, l2.end());
 }
 
 TEST(List, Splice3) {
-    
+    list<int> l1;
+    for (int i = 0; i < 100; ++i) {
+        l1.push_back(i);
+    }
+    for (int i = 200; i < 300; ++i) {
+        l1.push_back(i);
+    }
+
+    list<int> l2;
+    for (int i = 0; i < 300; ++i) {
+        l2.push_back(i);
+    }
+
+    auto itr1 = l1.begin();
+    advance(itr1, 100);
+    auto itr21 = l2.begin();
+    advance(itr21, 100);
+    auto itr22 = l2.begin();
+    advance(itr22, 200);
+    l1.splice(itr1, l2, itr21, itr22);
+
+    ASSERT_EQ(l1.size(), 300);
+    ASSERT_EQ(l2.size(), 200);
+
+    itr1 = l1.begin();
+    for (int i = 0; i < 300; ++i) {
+        ASSERT_NE(itr1, l1.end());
+        EXPECT_EQ(*itr1++, i);
+    }
+    ASSERT_EQ(itr1, l1.end());
 }
