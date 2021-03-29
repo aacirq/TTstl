@@ -82,9 +82,9 @@ namespace tt {
             } else {
                 difference_type node_offset;
                 if (offset >= 0) {
-                    node_offset = offset / buffer_size();
+                    node_offset = offset / static_cast<difference_type>(buffer_size());
                 } else {
-                    node_offset = (offset + 1) / buffer_size() - 1;
+                    node_offset = (offset + 1) / static_cast<difference_type>(buffer_size()) - 1;
                 }
                 set_node(node + node_offset);
                 cur = first + (offset - node_offset * buffer_size());
@@ -122,33 +122,41 @@ namespace tt {
         typedef T            value_type;
         typedef value_type*  pointer_type;
         typedef size_t       size_type;
-    
-    public:
-        typedef _deque_iterator<T, T&, T*, BufSiz>  iterator;
-        typedef typename iterator::difference_type  difference_type;
-        typedef typename iterator::reference        reference;
-        typedef typename iterator::const_iterator::reference const_reference;
-    
-    protected:
-        typedef pointer_type*  map_pointer;
 
-        typedef simple_alloc<value_type, Alloc> data_allocator;
-        typedef simple_alloc<pointer_type, Alloc> node_allocator;
-    
+    public:
+        typedef _deque_iterator<T, T&, T*, BufSiz>              iterator;
+        typedef _deque_iterator<T, const T&, const T*, BufSiz>  const_iterator;
+        typedef typename iterator::difference_type              difference_type;
+        typedef typename iterator::reference                    reference;
+        typedef typename iterator::const_iterator::reference    const_reference;
+
+    protected:
+        typedef pointer_type*                      map_pointer;
+        typedef simple_alloc<value_type, Alloc>    data_allocator;
+        typedef simple_alloc<pointer_type, Alloc>  node_allocator;
+
     protected:
         iterator start;
         iterator finish;
 
         map_pointer map;
         size_type   map_size;
-    
+
     public:
         iterator begin() { return start; }
+        const_iterator begin() const { return start; }
         iterator end() { return finish; }
+        const_iterator end() const { return finish; }
         reference operator [] (size_type n) { return start[difference_type(n)]; }
         reference front() { return *start; }
+        const_reference front() const { return *start; }
         reference back() {
             iterator tmp = finish;
+            --tmp;
+            return *tmp;
+        }
+        const_reference back() const {
+            const_iterator tmp = finish;
             --tmp;
             return *tmp;
         }
@@ -156,22 +164,17 @@ namespace tt {
         bool empty() const { return start == finish; }
 
     public:
-        // TODO 补充默认构造函数
-
-        deque(int n, const value_type &x) : start(), finish(), map(0), map_size(0) {
+        deque(int n, const value_type &x)
+        : start(), finish(), map(0), map_size(0) {
             fill_initialization(n, x);
         }
-    
+        deque(int n) : deque(n, value_type()) { }
+        deque() : deque(0) { }
+
     protected:
         static size_type buffer_size() { return iterator::buffer_size(); }
         size_type initial_map_size() { return 8; }
 
-        void fill_initialization(size_type n, const value_type &x);
-        void create_map_and_nodes(size_type num_elem);
-        void destroy_all();
-        void deallocate_all();
-    
-    protected:
         void reserve_map_at_back(size_type nodes_to_add = 1) {
             if (nodes_to_add + 1 > map_size - (finish.node - map)) {
                 reallocate_map(nodes_to_add, false);
@@ -184,6 +187,10 @@ namespace tt {
             }
         }
 
+        void fill_initialization(size_type n, const value_type &x);
+        void create_map_and_nodes(size_type num_elem);
+        void destroy_all();
+        void deallocate_all();
         void push_back_aux(const value_type &x);
         void push_front_aux(const value_type &x);
         void reallocate_map(size_type nodes_to_add, bool add_at_front);
@@ -257,7 +264,6 @@ namespace tt {
     template <class T, class Alloc, size_t BufSiz>
     void deque<T, Alloc, BufSiz>::create_map_and_nodes(size_type num_elem) {
         int num_nodes = num_elem / buffer_size() + 1;
-        // map_size = max(initial_map_size(), num_nodes + 2);
         map_size = initial_map_size() > (num_nodes+2) ? initial_map_size() : (num_nodes+2);
         map = node_allocator::allocate(map_size);
 

@@ -75,7 +75,7 @@ namespace tt {
     template <typename InputIterator, typename OutputIterator>
     struct _copy_dispatch {
         OutputIterator operator () (InputIterator first, InputIterator last, OutputIterator result) {
-            _copy(first, last, result, iterator_category(first));
+            return _copy(first, last, result, iterator_category(first));
         }
     };
 
@@ -161,7 +161,7 @@ namespace tt {
         inline BidirectionalIterator2
         operator ()(BidirectionalIterator1 first, BidirectionalIterator1 last,
                     BidirectionalIterator2 result) {
-            return _copy_backward(first, last, result, iterator_category(*first));
+            return _copy_backward(first, last, result, iterator_category(first));
         }
     };
 
@@ -180,7 +180,6 @@ namespace tt {
             return _copy_backward_tf(first, last, result, t());
         }
     };
-    
 
     template <class BidirectionalIterator1, class BidirectionalIterator2>
     inline BidirectionalIterator2

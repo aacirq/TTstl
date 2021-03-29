@@ -1,56 +1,176 @@
 #include <iostream>
 #include <algorithm>
 
+#include <gtest/gtest.h>
+
 #include "stl_deque.h"
 #include "stl_alloc.h"
+#include "iterator.h"
 
-using std::cout;
-using std::endl;
 using tt::deque;
 using tt::alloc;
 
-int main() {
+TEST(Deque, DefaultConstructor) {
+    deque<int> deq;
+    ASSERT_TRUE(deq.empty());
+    ASSERT_EQ(deq.size(), 0);
+    ASSERT_EQ(deq.begin(), deq.end());
+}
+
+TEST(Deque, ConstructWithOneParameter) {
+    deque<int> deq(20);
+    ASSERT_FALSE(deq.empty());
+    ASSERT_EQ(deq.size(), 20);
+    ASSERT_NE(deq.begin(), deq.end());
+    for (int i = 0; i < 20; ++i) {
+        EXPECT_EQ(deq[i], 0);
+    }
+}
+
+TEST(Deque, ConstructWithTwoParameters) {
+    deque<int> ideq1(20, 9);
+    ASSERT_FALSE(ideq1.empty());
+    ASSERT_EQ(ideq1.size(), 20);
+    ASSERT_NE(ideq1.begin(), ideq1.end());
+    for (int i = 0; i < ideq1.size(); ++i) {
+        EXPECT_EQ(ideq1[i], 9);
+    }
+
     deque<int, alloc, 32> ideq(20, 9);
-    cout << "size = " << ideq.size() << endl; // size = 20
+    ASSERT_FALSE(ideq.empty());
+    ASSERT_EQ(ideq.size(), 20);
+    ASSERT_NE(ideq.begin(), ideq.end());
+    for (int i = 0; i < ideq.size(); ++i) {
+        EXPECT_EQ(ideq[i], 9);
+    }
+}
 
-    for (int i = 0; i < ideq.size(); ++i)
-        ideq[i] = i;
-    
-    for (int i = 0; i < ideq.size(); ++i)
-        cout << ideq[i] << ' ';               // 0 1 2 3 4 5 6 ... 19
-    cout << endl;
+TEST(Deque, SubscriptOperator) {
+    deque<int> deq(20);
+    for (int i = 0; i < deq.size(); ++i) {
+        deq[i] = i;
+    }
+    ASSERT_EQ(deq.size(), 20);
+    for (int i = 0; i < deq.size(); ++i) {
+        EXPECT_EQ(deq[i], i);
+    }
+}
 
-    for (int i = 0; i < 3; i++)
-        ideq.push_back(i);
+TEST(Deque, PushBack) {
+    deque<int> deq;
+    for (int i = 0; i < 10000; ++i) {
+        deq.push_back(i);
+    }
+    ASSERT_EQ(deq.size(), 10000);
+    for (int i = 0; i < deq.size(); ++i) {
+        EXPECT_EQ(deq[i], i);
+    }
+}
 
-    for (int i = 0; i < ideq.size(); ++i)
-        cout << ideq[i] << ' ';               // 0 1 2 3 ... 19 0 1 2
-    cout << endl;
-    cout << "size = " << ideq.size() << endl; // size = 23
+TEST(Deque, PushFront) {
+    deque<int> deq;
+    for (int i = 0; i < 10000; ++i) {
+        deq.push_front(i);
+    }
+    ASSERT_EQ(deq.size(), 10000);
+    for (int i = 0; i < deq.size(); ++i) {
+        EXPECT_EQ(deq[i], 9999-i);
+    }
+}
 
-    ideq.push_back(3);
-    for (int i = 0; i < ideq.size(); ++i)
-        cout << ideq[i] << ' ';               // 0 1 2 3 ... 19 0 1 2 3
-    cout << endl;
-    cout << "size = " << ideq.size() << endl; // size = 24
+TEST(Deque, PopBack) {
+    deque<int> deq;
+    for (int i = 0; i < 10000; ++i) {
+        deq.push_back(i);
+    }
+    for (int i = 0; i < 5000; ++i) {
+        deq.pop_back();
+    }
+    ASSERT_EQ(deq.size(), 5000);
+    for (int i = 0; i < deq.size(); ++i) {
+        EXPECT_EQ(deq[i], i);
+    }
+}
 
-    ideq.push_front(99);
-    for (int i = 0; i < ideq.size(); ++i)
-        cout << ideq[i] << ' ';               // 99 0 1 2 3 ... 19 0 1 2 3
-    cout << endl;
-    cout << "size = " << ideq.size() << endl; // size = 25
+TEST(Deque, PopFront) {
+    deque<int> deq;
+    for (int i = 0; i < 10000; ++i) {
+        deq.push_front(i);
+    }
+    for (int i = 0; i < 2222; ++i) {
+        deq.pop_front();
+    }
+    ASSERT_EQ(deq.size(), 10000-2222);
+    for (int i = 0; i < deq.size(); ++i) {
+        EXPECT_EQ(deq[i], 10000-2222-1-i);
+    }
+}
 
-    ideq.push_front(98);
-    ideq.push_front(97);
-    for (int i = 0; i < ideq.size(); ++i)
-        cout << ideq[i] << ' ';               // 97 98 99 0 1 2 3 ... 19 0 1 2 3
-    cout << endl;
-    cout << "size = " << ideq.size() << endl; // size = 27
+TEST(Deque, Clear) {
+    deque<int> deq;
+    for (int i = 0; i < 10000; ++i) {
+        deq.push_back(i);
+    }
+    for (int i = 0; i < 10000; ++i) {
+        deq.push_front(i);
+    }
+    deq.clear();
+    ASSERT_TRUE(deq.empty());
+    ASSERT_EQ(deq.size(), 0);
+    ASSERT_EQ(deq.begin(), deq.end());
+}
 
-    deque<int, alloc, 32>::iterator itr;
-    itr = ideq.begin() + 2;
-    cout << *itr << endl;                     // 99
-    cout << *(itr.cur) << endl;               // 99
+TEST(Deque, Erase1) {
+    deque<int> deq;
+    for (int i = 0; i < 100; ++i) {
+        deq.push_back(i);
+    }
+    auto itr = deq.begin();
+    advance(itr, 5);
+    itr += 5;
+    for (int i = 11; i < 100; ++i) {
+        itr = deq.erase(itr);
+        ASSERT_NE(itr, deq.end());
+        EXPECT_EQ(*itr, i);
+    }
+    itr = deq.erase(itr);
+    ASSERT_EQ(itr, deq.end());
+    ASSERT_FALSE(deq.empty());
+    ASSERT_EQ(deq.size(), 10);
+}
 
-    return 0;
+TEST(Deque, Erase2) {
+    deque<int> deq;
+    for (int i = 0; i < 100; ++i) {
+        deq.push_back(i);
+    }
+    auto first = deq.begin() + 10;
+    auto last = deq.end();
+    auto itr = deq.erase(first, last);
+    ASSERT_EQ(itr, deq.end());
+    ASSERT_FALSE(deq.empty());
+    ASSERT_EQ(deq.size(), 10);
+}
+
+TEST(Deque, Insert) {
+    deque<int> deq(100, 2);
+    auto itr = deq.begin() + 10;
+    for (int n = 0; n < 10; ++n) {
+        for (int i = 9; i >= 0; --i) {
+            itr = deq.insert(itr, i);
+        }
+        itr += 20;
+    }
+    ASSERT_EQ(deq.size(), 200);
+    itr = deq.begin();
+    for (int n = 0; n < 10; ++n) {
+        for (int i = 0; i < 10; ++i) {
+            ASSERT_NE(itr, deq.end());
+            EXPECT_EQ(*itr++, 2);
+        }
+        for (int i = 0; i < 10; ++i) {
+            ASSERT_NE(itr, deq.end());
+            EXPECT_EQ(*itr++, i);
+        }
+    }
 }
