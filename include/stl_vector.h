@@ -9,6 +9,9 @@
 
 namespace tt {
 
+    /**
+     * Definition of class template vector
+     */
     template <class T, class Alloc = alloc>
     class vector {
     public:
@@ -27,11 +30,19 @@ namespace tt {
         iterator finish;
         iterator end_of_storge;
 
+        /**
+         * Insert `x` before `position`
+         */
         void insert_aux(iterator position, const T &x);
+
+        /**
+         * Deallocate memory within [start, end_of_storge).
+         */
         void deallocate() {
             if (start)
                 data_allocator::deallocate(start, end_of_storge - start);
         }
+
         void fill_initialize(size_type n, const T &value) {
             start = allocate_and_fill(n, value);
             finish = start + n;
@@ -39,12 +50,21 @@ namespace tt {
         }
 
     public:
-        vector() : start(0), finish(0), end_of_storge(0) {}
+        /**
+         * Constructor
+         */
+        vector() : start(0), finish(0), end_of_storge(0) { }
         vector(size_type n, const T &value) { fill_initialize(n, value); }
-        vector(int n, const T &value) { fill_initialize(static_cast<size_type>(n), value); }
-        vector(long n, const T &value) { fill_initialize(static_cast<size_type>(n), value); }
-        explicit vector(size_type n) { fill_initialize(static_cast<size_type>(n), T()); }
+        vector(int n, const T &value)
+        : vector(static_cast<size_type>(n), value) { };
+        vector(long n, const T &value)
+        : vector(static_cast<size_type>(n), value) { };
+        explicit vector(size_type n)
+        : vector(static_cast<size_type>(n), value_type()) { };
 
+        /**
+         * Destructor
+         */
         ~vector() {
             destroy(start, finish);
             deallocate();
@@ -116,7 +136,6 @@ namespace tt {
             return result;
         }
     };
-
 
     template <class T, class Alloc>
     void vector<T, Alloc>::insert_aux(iterator position, const T &x) {

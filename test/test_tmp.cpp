@@ -1,13 +1,19 @@
+#include <iostream>
+
 #include "stl_list.h"
 #include "stl_vector.h"
+#include "stl_deque.h"
+
+using std::cout; using std::endl;
 
 using tt::list;
 using tt::vector;
+using tt::deque;
 
 int main() {
-    vector<int> vec(500, 0);
-    for (int i = 0; i < 1000000; ++i) {
-        vec.push_back(i);
+    deque<int> deq;
+    for (int i = 0; i < 130; ++i) {
+        deq.push_back(i);
     }
     return 0;
 }

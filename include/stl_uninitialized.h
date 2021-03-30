@@ -16,9 +16,7 @@ namespace tt {
     inline ForwardIterator
     _uninitialized_copy_aux(InputIterator first, InputIterator last, 
                         ForwardIterator result, _true_type) {
-        // memmove(result, first, last - first);
         return copy(first, last, result);
-        // return result;
     }
 
     template <typename InputIterator, typename ForwardIterator>
@@ -40,7 +38,10 @@ namespace tt {
         return _uninitialized_copy_aux(first, last, result, is_POD());
     }
 
-    /* 返回在目的地址中的最后一个元素后一个 */
+    /**
+     * Copy elements within [first, last) into memory started by result.
+     * \return Iterator after last element copyed into
+     */
     template <typename InputIterator, typename ForwardIterator>
     inline ForwardIterator 
     uninitialized_copy(InputIterator first, InputIterator last, 

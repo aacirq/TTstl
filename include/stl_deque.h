@@ -170,6 +170,10 @@ namespace tt {
         }
         deque(int n) : deque(n, value_type()) { }
         deque() : deque(0) { }
+        ~deque() {
+            destroy_all();
+            deallocate_all();
+        }
 
     protected:
         static size_type buffer_size() { return iterator::buffer_size(); }
@@ -304,7 +308,7 @@ namespace tt {
         if (start.node == finish.node) {
             data_allocator::deallocate(start.first, buffer_size());
         } else {
-            for (map_pointer cur = start.node; cur < finish.node; ++cur) {
+            for (map_pointer cur = start.node; cur <= finish.node; ++cur) {
                 data_allocator::deallocate(*cur, buffer_size());
             }
         }

@@ -86,15 +86,30 @@ namespace tt {
         static char *end_free;
         static size_t heap_size;
 
-        /* 第一个大于等于n且为8的倍数的数 */
+        /**
+         * \return Minimum number(`N`) that satisfies: `N * _ALIGN >= n`
+         */
         static size_t ROUND_UP(size_t n) { return (n + _ALIGN - 1) / _ALIGN; }
-        /* 能够容纳bytes字节数据的最小区块对应的free——list下标 */
+
+        /**
+         * \return Mininum index of free_list that can hold `bytes` bytes.
+         * \warning Make sure that `bytes` is larger than 0, 0 will cause error.
+         */
         static size_t FREELIST_INDEX(size_t bytes) {
             return (bytes + _ALIGN - 1) / _ALIGN - 1;
         }
-        /* 返回一个能够容纳n个字节的obj，且可能会申请一些内存添加到free_list中 */
+
+        /**
+         * Get a `obj` can hold `n` bytes. Probably allocate new blocks to free_list.
+         * \return First address of getted `obj`
+         */
         static void * refill(size_t n);
-        /* 申请一大块内存，能够容纳(nobjs * sz)大小，如果无法申请，则可能改变nobjs的值 */
+
+        /**
+         * Allocate memory of `nobjs * sz` bytes.
+         * If `nobjs * sz` is too large to allocate, value of `nobjs` will be changed.
+         * \return First address of getted memory.
+         */
         static char * chunk_alloc(size_t sz, int &nobjs);
 
     public:
@@ -104,12 +119,14 @@ namespace tt {
     };
 
     _default_alloc_template::obj * volatile 
-        _default_alloc_template::free_list[_NFREELIST] = { 0 };
+        _default_alloc_template::free_list[_NFREELIST] = { 0 }; // TODO 考虑这里初始化会不会出问题
     char * _default_alloc_template::start_free = 0;
-    char * _default_alloc_template::end_free = 0;
-    size_t _default_alloc_template::heap_size = 0;
+    char * _default_alloc_template::end_free   = 0;
+    size_t _default_alloc_template::heap_size  = 0;
 
     void * _default_alloc_template::allocate(size_t sz) {
+        if (sz == 0) return nullptr;
+
         if (sz > _MAX_BYTES) {
             return malloc_alloc::allocate(sz);
         }
@@ -158,32 +175,17 @@ namespace tt {
         if (nobjs == 1) {
             return result;
         }
+
         obj * volatile * my_free_list = free_list + FREELIST_INDEX(n);
         obj * next_obj = (obj *)((char *)(result) + n);
         *my_free_list = next_obj;
         obj * current_obj;
-
-        // ========== version 1 ==========
-        // for (int i = 1; i < nobjs - 1 ; ++i) {
-        //     current_obj = next_obj;
-        //     next_obj = reinterpret_cast<obj *>((char *)current_obj + n);
-        //     if (nobjs - 1 == i) {
-        //         current_obj->free_list_link = 0;
-        //         break;
-        //     } else {
-        //         current_obj->free_list_link = next_obj;
-        //     }
-        // }
-        // ========== version 1 end ==========
-
-        // ========== version 2 ==========
-        for (int i = 1; i < nobjs - 1 ; ++i) {
+        for (int i = 1; i < nobjs - 1; ++i) {
             current_obj = next_obj;
-            next_obj = reinterpret_cast<obj *>((char *)current_obj + n);
+            next_obj = reinterpret_cast<obj *>((char *)current_obj + n); // TODO 当n不是8的倍数的时候出问题
             current_obj->free_list_link = next_obj;
         }
         next_obj->free_list_link = 0;
-        // ========== version 2 end ==========
 
         return result;
     }
@@ -192,7 +194,7 @@ namespace tt {
         size_t bytes_need = sz * nobjs;
         size_t bytes_left = end_free - start_free;
         char * result;
-        // printf("bytes_left: %d, bytes_need: %d\n", bytes_left, bytes_need);
+
         if (bytes_left >= bytes_need) {
             result = start_free;
             start_free += bytes_need;
@@ -204,8 +206,6 @@ namespace tt {
             start_free += sz * nobjs;
             return result;
         }
-        // printf("bytes_left = %d\n", bytes_left); // TODO delete
-        // printf("here3\n"); // TODO delete
         obj * volatile * my_free_list;
         if (bytes_left > 0) {
             /* TODO 这里bytes_left有没有可能不是_ALIGN的倍数，如果有可能的话，就不能这样算 */
@@ -228,34 +228,34 @@ namespace tt {
                 }
             }
             end_free = 0;
-            start_free = \
+            start_free = 
                 reinterpret_cast<char *>(malloc_alloc::allocate(bytes_to_get));
         }
         heap_size += bytes_to_get;
         end_free = start_free + bytes_to_get;
-        // printf("bytes_new : %d\n", end_free - start_free);
-        // printf("here4\n"); // TODO delete
         return chunk_alloc(sz, nobjs);
     }
 
-    typedef _default_alloc_template alloc;
+    // TODO 发现_default_alloc_template最终没有释放内存池中的内存，所以先改用_malloc_alloc_template
+    // typedef _default_alloc_template alloc;
+    typedef _malloc_alloc_template alloc;
 
     template <typename T, typename Alloc = alloc>
     class simple_alloc {
     public:
         static T * allocate(size_t n) {
-            return reinterpret_cast<T *>(Alloc::allocate(n * sizeof(T)));
+            return reinterpret_cast<T*>(Alloc::allocate(n * sizeof(T)));
         }
 
         static T * allocate() {
-            return reinterpret_cast<T *>(Alloc::allocate(sizeof(T)));
+            return reinterpret_cast<T*>(Alloc::allocate(sizeof(T)));
         }
 
-        static void deallocate(T * p, size_t n) {
+        static void deallocate(T *p, size_t n) {
             Alloc::deallocate(reinterpret_cast<void *>(p), n * sizeof(T));
         }
 
-        static void deallocate(T * p) {
+        static void deallocate(T *p) {
             Alloc::deallocate(reinterpret_cast<void *>(p), sizeof(T));
         }
     };
