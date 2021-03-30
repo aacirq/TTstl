@@ -18,7 +18,10 @@ namespace tt {
         typedef _deque_iterator<T, T&, T*, BufSiz>             iterator;
         typedef _deque_iterator<T, const T&, const T*, BufSiz> const_iterator;
 
-        static size_t buffer_size() { return _deque_bufer_size(BufSiz, sizeof(T)); }
+        //! \return Size of every node
+        static size_t buffer_size() {
+            return _deque_bufer_size(BufSiz, sizeof(T));
+        }
 
         typedef random_access_iterator_tag  iterator_category;
         typedef T                           value_type;
@@ -36,6 +39,7 @@ namespace tt {
         T *cur;
         map_pointer node;
 
+        //! Set this iterator by `new_node`
         void set_node(map_pointer new_node) {
             node = new_node;
             first = *new_node;
@@ -147,9 +151,10 @@ namespace tt {
         const_iterator begin() const { return start; }
         iterator end() { return finish; }
         const_iterator end() const { return finish; }
-        reference operator [] (size_type n) { return start[difference_type(n)]; }
         reference front() { return *start; }
         const_reference front() const { return *start; }
+        size_type size() const { return size_type(finish - start); }
+        bool empty() const { return start == finish; }
         reference back() {
             iterator tmp = finish;
             --tmp;
@@ -160,14 +165,13 @@ namespace tt {
             --tmp;
             return *tmp;
         }
-        size_type size() const { return size_type(finish - start); }
-        bool empty() const { return start == finish; }
+        reference operator [] (size_type n) {
+            return start[difference_type(n)];
+        }
 
     public:
         deque(int n, const value_type &x)
-        : start(), finish(), map(0), map_size(0) {
-            fill_initialization(n, x);
-        }
+        : start(), finish(), map(0), map_size(0) { fill_initialization(n, x); }
         deque(int n) : deque(n, value_type()) { }
         deque() : deque(0) { }
         ~deque() {
@@ -176,28 +180,38 @@ namespace tt {
         }
 
     protected:
+        //! \return Size of every node
         static size_type buffer_size() { return iterator::buffer_size(); }
+        //! \return Default map_size (if not set, or setted number is too small)
         size_type initial_map_size() { return 8; }
 
+        //! Make sure `nodes_to_add` empty nodes in the end
         void reserve_map_at_back(size_type nodes_to_add = 1) {
             if (nodes_to_add + 1 > map_size - (finish.node - map)) {
                 reallocate_map(nodes_to_add, false);
             }
         }
 
+        //! Make sure `nodes_to_add` empty nodes in the front
         void reserve_map_at_front(size_type nodes_to_add = 1) {
             if (nodes_to_add > start.node - map) {
                 reallocate_map(nodes_to_add, true);
             }
         }
 
+        //! Initialize map with `n` elements, and all elements are set by `x`
         void fill_initialization(size_type n, const value_type &x);
+        //! Create `num_elem` elements. For initialization
         void create_map_and_nodes(size_type num_elem);
+        //! Destroy all elements
         void destroy_all();
+        //! Deallocate all memory
         void deallocate_all();
         void push_back_aux(const value_type &x);
         void push_front_aux(const value_type &x);
         void reallocate_map(size_type nodes_to_add, bool add_at_front);
+        //! Insert `x` before `pos`
+        //! \return Iterator pointing to inserted elements
         iterator insert_aux(iterator pos, const value_type &x);
 
     public:
@@ -244,8 +258,16 @@ namespace tt {
         }
 
         void clear();
+        //! Erase elements in `pos`
+        //! \return Iterator pointing to element right after deleted element
+        //!         (before deleting)
         iterator erase(iterator pos);
+        //! Erase elements within [first, last)
+        //! \return Iterator pointing to element right after all deleted elements
+        //!         (before deleting)
         iterator erase(iterator first, iterator last);
+        //! Insert `x` before `pos`
+        //! \return Iterator pointing to element inserted
         iterator insert(iterator pos, const value_type &x);
     };
 

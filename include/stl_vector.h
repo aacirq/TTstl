@@ -44,7 +44,6 @@ namespace tt {
         }
 
     public:
-        //! Constructor(s)
         vector() : start(0), finish(0), end_of_storge(0) { }
         vector(size_type n, const T &value) { fill_initialize(n, value); }
         vector(int n, const T &value)
@@ -53,8 +52,6 @@ namespace tt {
         : vector(static_cast<size_type>(n), value) { };
         explicit vector(size_type n)
         : vector(static_cast<size_type>(n), value_type()) { };
-
-        //! Destructor
         ~vector() {
             destroy(start, finish);
             deallocate();
@@ -88,7 +85,7 @@ namespace tt {
         }
 
         //! Erase elements in `position`
-        //! \return Iterator pointed to element right after deleted element
+        //! \return Iterator pointing to element right after deleted element
         //!         (before deleting)
         iterator erase(iterator position) {
             if (position + 1 != finish)
@@ -99,7 +96,7 @@ namespace tt {
         }
 
         //! Erase elements within [first, last)
-        //! \return Iterator pointed to element right after all deleted elements
+        //! \return Iterator pointing to element right after all deleted elements
         //!         (before deleting)
         iterator erase(iterator first, iterator last) {
             iterator i = copy(last, finish, first);

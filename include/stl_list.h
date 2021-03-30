@@ -113,7 +113,6 @@ namespace tt {
         }
 
     public:
-        //! constructor & destructor
         list() { empty_initialize(); }
         ~list() {
             clear();
@@ -130,7 +129,7 @@ namespace tt {
         }
 
         //! Insert `x` before position
-        //! \return Iterator pointed to added node
+        //! \return Iterator pointing to added node
         iterator insert(iterator position, const T &x) {
             link_type new_node = create_node(x);
             new_node->next = position.node;
@@ -141,7 +140,7 @@ namespace tt {
         }
 
         //! Erase element pointed by position
-        //! \return Iterator pointed to element right after deleted element
+        //! \return Iterator pointing to element right after deleted element
         //!         (before deleting)
         iterator erase(iterator position) {
             link_type prev_node = position.node->prev;
