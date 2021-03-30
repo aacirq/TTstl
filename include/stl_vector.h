@@ -88,7 +88,8 @@ namespace tt {
         }
 
         //! Erase elements in `position`
-        //! \return Element right after deleted element (before deleting)
+        //! \return Iterator pointed to element right after deleted element
+        //!         (before deleting)
         iterator erase(iterator position) {
             if (position + 1 != finish)
                 iterator i = copy(position + 1, finish, position);
@@ -98,7 +99,8 @@ namespace tt {
         }
 
         //! Erase elements within [first, last)
-        //! \return Element right after all deleted elements (before deleting)
+        //! \return Iterator pointed to element right after all deleted elements
+        //!         (before deleting)
         iterator erase(iterator first, iterator last) {
             iterator i = copy(last, finish, first);
             destroy(i, finish);
@@ -111,7 +113,8 @@ namespace tt {
             insert(position, 1, x);
         }
 
-        //! Insert `n` elements before position, and all inserted elements set by `x`
+        //! Insert `n` elements before position, 
+        //! and all inserted elements set by `x`
         void insert(iterator position, size_type n, const T &x);
 
         //! Resize vector to `new_size`

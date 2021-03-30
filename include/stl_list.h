@@ -30,9 +30,9 @@ namespace tt {
 
         link_type node;
 
-        _list_iterator() {}
-        _list_iterator(link_type x) : node(x) {}
-        _list_iterator(const iterator &x) : node(x.node) {} // TODO 这里为什么用iterator不用self
+        _list_iterator() { }
+        _list_iterator(link_type x) : node(x) { }
+        _list_iterator(const iterator &x) : node(x.node) { } // TODO 为什么用iterator而不是self
 
         bool operator == (const self &rhs) const { return node == rhs.node; }
         bool operator != (const self &rhs) const { return node != rhs.node; }
@@ -78,13 +78,21 @@ namespace tt {
         link_type node;
 
     protected:
-        link_type get_node() { return (link_type)(list_node_allocator::allocate()); }
+        //! Allocate a list node
+        //! \return First address of node
+        link_type get_node() {
+            return (link_type)(list_node_allocator::allocate());
+        }
+        //! Deallocate node pointed by `p`
         void put_node(link_type p) { list_node_allocator::deallocate(p); }
+        //! Create a node and set to `x`
+        //! \return First address of node
         link_type create_node(const T &x) {
             link_type p = get_node();
             construct(&(p->data), x);
             return p;
         }
+        //! Destroy and deallocate node pointed by `p`
         void destroy_node(link_type p) {
             destroy(&(p->data));
             put_node(p);
@@ -95,21 +103,21 @@ namespace tt {
         const_iterator begin() const { return const_iterator(node->next); }
         iterator end() { return iterator(node); }
         const_iterator end() const { return const_iterator(node); }
-        bool empty() const { return node->next == node; }
-        size_type size() const { return distance(iterator(node->next), iterator(node)); } // 解决const问题，begin()和end()无法在const对象中使用
-        // 取最前面的元素data
         reference front() { return *begin(); }
         const_reference front() const { return *begin(); }
-        // 取最后面的元素data
         reference back() { return *(--end()); }
         const_reference back() const { *(--end()); }
+        bool empty() const { return node->next == node; }
+        size_type size() const {
+            return distance(iterator(node->next), iterator(node));
+        }
 
     public:
+        //! constructor & destructor
         list() { empty_initialize(); }
         ~list() {
             clear();
             put_node(node);
-            // destroy_node(node);
         }
 
         void push_front(const T &x) { insert(begin(), x); }
@@ -121,6 +129,8 @@ namespace tt {
             erase(--tmp);
         }
 
+        //! Insert `x` before position
+        //! \return Iterator pointed to added node
         iterator insert(iterator position, const T &x) {
             link_type new_node = create_node(x);
             new_node->next = position.node;
@@ -130,6 +140,9 @@ namespace tt {
             return iterator(new_node);
         }
 
+        //! Erase element pointed by position
+        //! \return Iterator pointed to element right after deleted element
+        //!         (before deleting)
         iterator erase(iterator position) {
             link_type prev_node = position.node->prev;
             link_type next_node = position.node->next;
@@ -139,33 +152,36 @@ namespace tt {
             return iterator(next_node);
         }
 
-        // 清除所有结点
+        //! Clear all nodes
         void clear();
-        // 将数值value的所有元素移除
+        //! remove all elements which equal to `value`
         void remove(const T &value);
-        // 如果存在连续的相同的元素，只保留一个
+        //! For continuous nodes that equal to same value, just keep one
         void unique();
-        // 将[first, last)区间内的所有元素移动到position前面
+        //! Remove elements within [first, last) in front of position
         void transfer(iterator position, iterator first, iterator last);
-        // 将x合并到*this上，x和*this都是递增序列
+        //! Merge list `x` to `*this`
+        //! Before merge, `x` and `*this` need to be ascending
         void merge(list<T, Alloc> &x);
-        // 反方向
+        //! Reverse list
         void reverse();
-        // 升序排序，quick sort
+        //! Ascending sort
         void sort();
 
-        // 将列表x接到position之前
+        //! Move list `x` in front of position
         void splice(iterator position, list &x) {
             if (!x.empty()) {
                 transfer(position, x.begin(), x.end());
             }
         }
+        //! Move elements pointed by `i` in front of position
         void splice(iterator position, list &, iterator i) {
             iterator j = i;
             ++j;
             if (position == i || position == j) return;
             transfer(position, i, j);
         }
+        //! Move elements within [first, last) in front of position
         void splice(iterator position, list &, iterator first, iterator last) {
             if (last != position) {
                 transfer(position, first, last);
@@ -229,7 +245,8 @@ namespace tt {
     }
 
     template <class T, class Alloc>
-    void list<T, Alloc>::transfer(iterator position, iterator first, iterator last) {
+    void list<T, Alloc>::transfer(iterator position, iterator first, 
+                                  iterator last) {
         if (position != last) {
             link_type tmp = last.node->prev;
             first.node->prev->next = last.node;
