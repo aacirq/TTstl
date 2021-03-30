@@ -9,9 +9,7 @@
 
 namespace tt {
 
-    /**
-     * Definition of class template vector
-     */
+    //! Definition of class template vector
     template <class T, class Alloc = alloc>
     class vector {
     public:
@@ -30,14 +28,10 @@ namespace tt {
         iterator finish;
         iterator end_of_storge;
 
-        /**
-         * Insert `x` before `position`
-         */
+        //! Insert `x` before `position`
         void insert_aux(iterator position, const T &x);
 
-        /**
-         * Deallocate memory within [start, end_of_storge).
-         */
+        //! Deallocate memory within [start, end_of_storge).
         void deallocate() {
             if (start)
                 data_allocator::deallocate(start, end_of_storge - start);
@@ -50,9 +44,7 @@ namespace tt {
         }
 
     public:
-        /**
-         * Constructor
-         */
+        //! Constructor(s)
         vector() : start(0), finish(0), end_of_storge(0) { }
         vector(size_type n, const T &value) { fill_initialize(n, value); }
         vector(int n, const T &value)
@@ -62,9 +54,7 @@ namespace tt {
         explicit vector(size_type n)
         : vector(static_cast<size_type>(n), value_type()) { };
 
-        /**
-         * Destructor
-         */
+        //! Destructor
         ~vector() {
             destroy(start, finish);
             deallocate();
@@ -97,6 +87,8 @@ namespace tt {
             destroy(finish);
         }
 
+        //! Erase elements in `position`
+        //! \return Element right after deleted element (before deleting)
         iterator erase(iterator position) {
             if (position + 1 != finish)
                 iterator i = copy(position + 1, finish, position);
@@ -105,6 +97,8 @@ namespace tt {
             return position;
         }
 
+        //! Erase elements within [first, last)
+        //! \return Element right after all deleted elements (before deleting)
         iterator erase(iterator first, iterator last) {
             iterator i = copy(last, finish, first);
             destroy(i, finish);
@@ -112,12 +106,17 @@ namespace tt {
             return first;
         }
 
+        //! Insert `x` before position
         void insert(iterator position, const T &x) {
             insert(position, 1, x);
         }
 
+        //! Insert `n` elements before position, and all inserted elements set by `x`
         void insert(iterator position, size_type n, const T &x);
 
+        //! Resize vector to `new_size`
+        //! If `new_size > old_size`, set all new elements by `x`,
+        //! otherwise, delete elements at the end.
         void resize(size_type new_size, const T &x) {
             if (new_size <= size()) {
                 erase(begin() + new_size, end());
@@ -211,4 +210,4 @@ namespace tt {
 
 }
 
-#endif /* TTSTL_STL_VECTOR_H */
+#endif // TTSTL_STL_VECTOR_H
