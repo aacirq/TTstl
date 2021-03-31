@@ -71,6 +71,7 @@ namespace tt {
     typedef _malloc_alloc_template malloc_alloc;
 
     /* ================= _default_alloc_template ================= */
+    // TODO 这个allocator有问题，实现更好的allocator
     class _default_alloc_template {
     private:
         union obj {
