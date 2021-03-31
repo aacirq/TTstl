@@ -80,6 +80,14 @@ target_include_directories(test_queue
 )
 target_link_libraries(test_queue gtest_main)
 
+# Test of include/stl_heap.h
+add_executable(test_heap test/test_heap.cpp)
+target_include_directories(test_heap
+    PRIVATE 
+        ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(test_heap gtest_main)
+
 # Tmp test
 add_executable(test_tmp test/test_tmp.cpp)
 target_include_directories(test_tmp
