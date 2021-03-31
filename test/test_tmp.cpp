@@ -11,9 +11,16 @@ using tt::vector;
 using tt::deque;
 
 int main() {
-    deque<int> deq;
-    for (int i = 0; i < 130; ++i) {
-        deq.push_back(i);
-    }
+    int ia[] = {0, 1, 2, 3, 4, 5};
+    // vector<int> vec;
+    // int *first = ia;
+    // int *last = ia + 6;
+    
+    // for (; first != last; ++first) {
+    //     vec.push_back(*first);
+    // }
+
+    
+    vector<int> vec(ia, ia + 6);
     return 0;
 }

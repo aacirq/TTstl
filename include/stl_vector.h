@@ -57,6 +57,13 @@ namespace tt {
             deallocate();
         }
 
+        template <class InputIterator>
+        vector(InputIterator first, InputIterator last) : vector(0) {
+            for (; first != last; ++first) {
+                this->push_back(*first);
+            }
+        }
+
         iterator begin() { return start; }
         const_iterator begin() const { return start; }
         iterator end() { return finish; }

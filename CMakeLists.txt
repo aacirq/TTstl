@@ -88,6 +88,14 @@ target_include_directories(test_heap
 )
 target_link_libraries(test_heap gtest_main)
 
+# Test of include/stl_priority_queue.h
+add_executable(test_priority_queue test/test_priority_queue.cpp)
+target_include_directories(test_priority_queue
+    PRIVATE 
+        ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(test_priority_queue gtest_main)
+
 # Tmp test
 add_executable(test_tmp test/test_tmp.cpp)
 target_include_directories(test_tmp
