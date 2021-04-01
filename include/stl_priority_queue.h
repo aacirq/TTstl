@@ -25,11 +25,14 @@ namespace tt {
         explicit priority_queue(const Compare &x) : c(), comp(x) { }
 
         template <class InputIterator>
-        priority_queue(InputIterator first, InputIterator last, const Compare &x)
+        priority_queue(InputIterator first, 
+                       InputIterator last, 
+                       const Compare &x)
         : c(first, last), comp(x) { make_heap(c.begin(), c.end(), comp); }
 
         template <class InputIterator>
-        priority_queue(InputIterator first, InputIterator last)
+        priority_queue(InputIterator first, 
+                       InputIterator last)
         : c(first, last) { make_heap(c.begin(), c.end(), comp); }
 
         bool empty() const { return c.empty(); }
