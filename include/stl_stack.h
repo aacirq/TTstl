@@ -8,9 +8,11 @@ namespace tt {
     template <class T, class Sequence = deque<T>>
     class stack {
         template <class Type, class SeqType>
-        friend bool operator == (const stack<Type, SeqType> &s1, const stack<Type, SeqType> &s2);
+        friend bool operator == (const stack<Type, SeqType> &s1, 
+                                 const stack<Type, SeqType> &s2);
         template <class Type, class SeqType>
-        friend bool operator < (const stack<Type, SeqType> &s1, const stack<Type, SeqType> &s2);
+        friend bool operator < (const stack<Type, SeqType> &s1, 
+                                const stack<Type, SeqType> &s2);
     protected:
         Sequence c;
     public:
@@ -28,12 +30,14 @@ namespace tt {
     };
 
     template <class T, class Sequence>
-    bool operator == (const stack<T, Sequence> &s1, const stack<T, Sequence> &s2) {
+    bool operator == (const stack<T, Sequence> &s1, 
+                      const stack<T, Sequence> &s2) {
         return s1.c == s2.c;
     }
 
     template <class T, class Sequence>
-    bool operator < (const stack<T, Sequence> &s1, const stack<T, Sequence> &s2) {
+    bool operator < (const stack<T, Sequence> &s1, 
+                     const stack<T, Sequence> &s2) {
         return s1.c < s2.c;
     }
 

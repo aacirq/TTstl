@@ -31,7 +31,8 @@ namespace tt {
     }
 
     /* ========== copy ========== */
-    template <typename RandomAccessIterator, typename OutputIterator, typename Distance>
+    template <typename RandomAccessIterator, typename OutputIterator, 
+              typename Distance>
     inline OutputIterator
     _copy_d(RandomAccessIterator first, RandomAccessIterator last,
             OutputIterator result, Distance*) {
@@ -74,7 +75,8 @@ namespace tt {
 
     template <typename InputIterator, typename OutputIterator>
     struct _copy_dispatch {
-        OutputIterator operator () (InputIterator first, InputIterator last, OutputIterator result) {
+        OutputIterator operator () (InputIterator first, InputIterator last, 
+                                    OutputIterator result) {
             return _copy(first, last, result, iterator_category(first));
         }
     };
@@ -82,7 +84,8 @@ namespace tt {
     template <typename T>
     struct _copy_dispatch<T*, T*> {
         T * operator () (T *first, T *last, T *result) {
-            typedef typename _type_traits<T>::has_trivial_assignment_operator has_trivial;
+            typedef typename _type_traits<T>::has_trivial_assignment_operator 
+                    has_trivial;
             return _copy_tf(first, last, result, has_trivial());
         }
     };
@@ -90,7 +93,8 @@ namespace tt {
     template <typename T>
     struct _copy_dispatch<const T*, T*> {
         T * operator () (const T *first, const T *last, T *result) {
-            typedef typename _type_traits<T>::has_trivial_assignment_operator has_trivial;
+            typedef typename _type_traits<T>::has_trivial_assignment_operator 
+                    has_trivial;
             return _copy_tf(first, last, result, has_trivial());
         }
     };
@@ -99,7 +103,8 @@ namespace tt {
     template <typename InputIterator, typename OutputIterator>
     inline OutputIterator
     copy(InputIterator first, InputIterator last, OutputIterator result) {
-        return _copy_dispatch<InputIterator, OutputIterator>()(first, last, result);
+        typedef _copy_dispatch<InputIterator, OutputIterator> dispatch;
+        return dispatch()(first, last, result);
     }
 
     template <> inline char *
@@ -116,7 +121,8 @@ namespace tt {
 
 
     /* ========== copy_backward ========== */
-    template <class RandomAccessIterator, class BidirectionalIterator, class Distance>
+    template <class RandomAccessIterator, class BidirectionalIterator, 
+              class Distance>
     inline BidirectionalIterator
     _copy_backward_d(RandomAccessIterator first, RandomAccessIterator last,
                      BidirectionalIterator result, Distance *) {
@@ -145,14 +151,16 @@ namespace tt {
     }
 
     template <class T>
-    inline T *_copy_backward_tf(const T *first, const T *last, T *result, _true_type) {
+    inline T *_copy_backward_tf(const T *first, const T *last, T *result, 
+                                _true_type) {
         T *cur_first = result - (last - first);
         memmove(cur_first, first, (last - first) * sizeof(T));
         return cur_first;
     }
 
     template <class T>
-    inline T *_copy_backward_tf(const T *first, const T *last, T *result, _false_type) {
+    inline T *_copy_backward_tf(const T *first, const T *last, T *result, 
+                                _false_type) {
         return _copy_backward_d(first, last, result, (ptrdiff_t*)0);
     }
 
@@ -161,7 +169,8 @@ namespace tt {
         inline BidirectionalIterator2
         operator ()(BidirectionalIterator1 first, BidirectionalIterator1 last,
                     BidirectionalIterator2 result) {
-            return _copy_backward(first, last, result, iterator_category(first));
+            return _copy_backward(first, last, result, 
+                                  iterator_category(first));
         }
     };
 
@@ -185,7 +194,10 @@ namespace tt {
     inline BidirectionalIterator2
     copy_backward(BidirectionalIterator1 first, BidirectionalIterator1 last, 
                   BidirectionalIterator2 result) {
-        return _copy_backward_dispatch<BidirectionalIterator1, BidirectionalIterator2>()(first, last, result);
+        typedef _copy_backward_dispatch<BidirectionalIterator1, 
+                                        BidirectionalIterator2>
+                dispatch;
+        return dispatch()(first, last, result);
     }
 
     template <> inline char *

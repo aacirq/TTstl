@@ -49,7 +49,8 @@ namespace tt {
         reference operator * () const { return *cur; }
         pointer_type operator -> () const { return &(operator*()); }
         difference_type operator - (const self &x) const {
-            return (node - x.node - 1) * buffer_size() + (cur - first) + (x.last - x.cur);
+            return (node - x.node - 1) * buffer_size() 
+                   + (cur - first) + (x.last - x.cur);
         }
         self & operator ++ () {
             if (cur + 1 == last) {
@@ -86,9 +87,12 @@ namespace tt {
             } else {
                 difference_type node_offset;
                 if (offset >= 0) {
-                    node_offset = offset / static_cast<difference_type>(buffer_size());
+                    node_offset = 
+                        offset / static_cast<difference_type>(buffer_size());
                 } else {
-                    node_offset = (offset + 1) / static_cast<difference_type>(buffer_size()) - 1;
+                    node_offset = 
+                        (offset+1) / static_cast<difference_type>(buffer_size()) 
+                        - 1;
                 }
                 set_node(node + node_offset);
                 cur = first + (offset - node_offset * buffer_size());
@@ -272,7 +276,8 @@ namespace tt {
     };
 
     template <class T, class Alloc, size_t BufSiz>
-    void deque<T, Alloc, BufSiz>::fill_initialization(size_type n, const value_type &x) {
+    void deque<T, Alloc, BufSiz>::fill_initialization(size_type n, 
+                                                      const value_type &x) {
         create_map_and_nodes(n);
         value_type x_copy = x;
         try {
@@ -290,7 +295,8 @@ namespace tt {
     template <class T, class Alloc, size_t BufSiz>
     void deque<T, Alloc, BufSiz>::create_map_and_nodes(size_type num_elem) {
         int num_nodes = num_elem / buffer_size() + 1;
-        map_size = initial_map_size() > (num_nodes+2) ? initial_map_size() : (num_nodes+2);
+        map_size = initial_map_size() > (num_nodes+2) ? 
+                   initial_map_size() : (num_nodes+2);
         map = node_allocator::allocate(map_size);
 
         map_pointer node_start = map + (map_size - num_nodes) / 2;
@@ -374,16 +380,18 @@ namespace tt {
     }
 
     template <class T, class Alloc, size_t BufSiz>
-    void deque<T, Alloc, BufSiz>::reallocate_map(size_type nodes_to_add, bool add_at_front) {
+    void deque<T, Alloc, BufSiz>::reallocate_map(size_type nodes_to_add, 
+                                                 bool add_at_front) {
         size_type old_num_nodes = finish.node - start.node + 1;
         size_type new_num_nodes = old_num_nodes + nodes_to_add;
         map_pointer new_start;
         if (map_size > 2 * new_num_nodes) {
-            new_start = map + (map_size-new_num_nodes)/2 + (add_at_front ? nodes_to_add : 0);
+            new_start = map + (map_size-new_num_nodes)/2 
+                        + (add_at_front ? nodes_to_add : 0);
             if (new_start < start.node) {
                 copy(start.node, finish.node, new_start);
             } else {
-                copy_backward(start.node, finish.node, new_start + old_num_nodes);
+                copy_backward(start.node, finish.node, new_start+old_num_nodes);
             }
         } else {
             size_type new_map_size = map_size + (map_size > new_num_nodes ? map_size : new_num_nodes) + 2;
