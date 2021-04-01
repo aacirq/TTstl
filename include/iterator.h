@@ -13,7 +13,7 @@ namespace tt {
     struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 
     template <typename Category, typename T, typename Difference = ptrdiff_t,
-            typename Pointer = T *, typename Reference = T &>
+              typename Pointer = T *, typename Reference = T &>
     struct iterator {
         typedef Category    iterator_category;
         typedef T           value_type;
@@ -59,13 +59,14 @@ namespace tt {
     template <typename Iterator>
     inline typename iterator_traits<Iterator>::difference_type *
     distance_type(const Iterator &) {
-        return static_cast<typename iterator_traits<Iterator>::difference_type*>(0);
+        typedef typename iterator_traits<Iterator>::difference_type diff_type;
+        return static_cast<diff_type*>(0);
     }
 
     template <typename Iterator>
     inline typename iterator_traits<Iterator>::value_type *
     value_type(const Iterator &) {
-        return static_cast<typename iterator_traits<Iterator>::value_type *>(0);
+        return static_cast<typename iterator_traits<Iterator>::value_type*>(0);
     }
 
     template <typename InputIterator>
