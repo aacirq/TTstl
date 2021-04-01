@@ -194,7 +194,7 @@ namespace tt {
             }
         } else {
             const size_type old_size = size();
-            const size_type new_size = old_size + (old_size > n ? old_size : n);
+            const size_type new_size = old_size + max(old_size, n);
             iterator new_start = data_allocator::allocate(new_size);
             iterator new_finish = new_start;
             try {

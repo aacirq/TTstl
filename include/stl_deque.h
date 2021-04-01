@@ -6,6 +6,7 @@
 #include "iterator.h"
 #include "stl_alloc.h"
 #include "stl_uninitialized.h"
+#include "stl_algobase.h"
 
 namespace tt {
 
@@ -295,8 +296,7 @@ namespace tt {
     template <class T, class Alloc, size_t BufSiz>
     void deque<T, Alloc, BufSiz>::create_map_and_nodes(size_type num_elem) {
         int num_nodes = num_elem / buffer_size() + 1;
-        map_size = initial_map_size() > (num_nodes+2) ? 
-                   initial_map_size() : (num_nodes+2);
+        map_size = max(initial_map_size(), num_nodes + 2);
         map = node_allocator::allocate(map_size);
 
         map_pointer node_start = map + (map_size - num_nodes) / 2;
@@ -386,15 +386,14 @@ namespace tt {
         size_type new_num_nodes = old_num_nodes + nodes_to_add;
         map_pointer new_start;
         if (map_size > 2 * new_num_nodes) {
-            new_start = map + (map_size-new_num_nodes)/2 
-                        + (add_at_front ? nodes_to_add : 0);
+            new_start = map + (map_size-new_num_nodes)/2 + (add_at_front ? nodes_to_add : 0);
             if (new_start < start.node) {
                 copy(start.node, finish.node, new_start);
             } else {
                 copy_backward(start.node, finish.node, new_start+old_num_nodes);
             }
         } else {
-            size_type new_map_size = map_size + (map_size > new_num_nodes ? map_size : new_num_nodes) + 2;
+            size_type new_map_size = map_size + max(map_size, new_num_nodes) + 2;
             map_pointer new_map = node_allocator::allocate(new_map_size);
             new_start = new_map + (new_map_size-new_num_nodes)/2 + (add_at_front ? nodes_to_add : 0);
             copy(start.node, finish.node + 1, new_start);

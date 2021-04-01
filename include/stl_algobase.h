@@ -213,6 +213,28 @@ namespace tt {
         memmove(res_first, first, (last - first) * sizeof(wchar_t));
         return res_first;
     }
+
+    //! ========== max ==========
+    template <class T>
+    inline const T & max(const T &x, const T &y) {
+        return x < y ? y : x;
+    }
+
+    template <class T, class Compare>
+    inline const T & max(const T &x, const T &y, const Compare &comp) {
+        return comp(x, y) ? y : x;
+    }
+
+    //! ========== min ==========
+    template <class T>
+    inline const T & min(const T &x, const T &y) {
+        return x < y ? x : y;
+    }
+
+    template <class T, class Compare>
+    inline const T & min(const T &x, const T &y, const Compare &comp) {
+        return comp(x, y) ? x : y;
+    }
 }
 
 
