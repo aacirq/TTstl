@@ -296,7 +296,7 @@ namespace tt {
     template <class T, class Alloc, size_t BufSiz>
     void deque<T, Alloc, BufSiz>::create_map_and_nodes(size_type num_elem) {
         int num_nodes = num_elem / buffer_size() + 1;
-        map_size = max(initial_map_size(), num_nodes + 2);
+        map_size = max(initial_map_size(), size_type(num_nodes + 2));
         map = node_allocator::allocate(map_size);
 
         map_pointer node_start = map + (map_size - num_nodes) / 2;
