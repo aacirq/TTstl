@@ -1,5 +1,15 @@
 # TTstl
 
-这是自己学习过程中对一些数据结构和算法的实现
+看《STL源码剖析》和部分g++源码，自己尝试模仿实现。g++版本为：g++ (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0
 
-有模仿STL的部分，也有额外添加的部分
+文件及内容：
+
+- stl_iterator_base_types.h
+
+定义了5种iterator category，`iterator_traits`，及迭代器定义模板`iterator`。
+
+
+- stl_iterator_base_funcs.h
+
+定义了4个对迭代器操作的函数`distance(first, last)`, `advance(itr, n)`, `next(itr, n=1)`, `prev(itr, n=1)`。
+
