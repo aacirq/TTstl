@@ -6,10 +6,20 @@
 
 - stl_iterator_base_types.h
 
-定义了5种iterator category，`iterator_traits`，及迭代器定义模板`iterator`。
-
+    定义了5种迭代器类型(`iterator_category`)，`iterator_traits`，及迭代器定义模板`iterator`。
 
 - stl_iterator_base_funcs.h
 
-定义了4个对迭代器操作的函数`distance(first, last)`, `advance(itr, n)`, `next(itr, n=1)`, `prev(itr, n=1)`。
+    定义了4个对迭代器操作的函数`distance(first, last)`, `advance(itr, n)`, `next(itr, n=1)`, `prev(itr, n=1)`。
 
+- type_traits.h
+
+    定义了type_traits，包括4个判定类型
+
+    1. `has_trivial_default_constructor`
+    2. `has_trivial_copy_constructor`
+    3. `has_trivial_assignment_operator`
+    4. `has_trivial_destructor`
+    5. `is_POD_type`
+
+    用来帮助代码提速。
