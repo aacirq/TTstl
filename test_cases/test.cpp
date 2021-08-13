@@ -6,6 +6,6 @@
 #include <vector>
 
 int main() {
-    std::cout << "test from TTstl/test" << std::endl;
-    return 0;
+  std::cout << "test from TTstl/test" << std::endl;
+  return 0;
 }
