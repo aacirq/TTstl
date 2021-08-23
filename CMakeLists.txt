@@ -4,6 +4,6 @@ project(TTstl)
 
 include_directories({PROJECT_SOURCE_DIR}/include)
 
-add_executable(test1 test/test.cpp)
+add_executable(test1 test_cases/test.cpp)
 
 set(CMAKE_CXX_STANDARD 11)
