@@ -13,16 +13,16 @@ struct random_access_iterator_tag : public bidirectional_iterator_tag {};
 
 template <typename Category, typename T, typename Distance = ptrdiff_t,
           typename Pointer = T *, typename Reference = T &>
-class iterator {
-  typedef Category iterator_category;
-  typedef T value_type;
-  typedef ptrdiff_t difference_type;
-  typedef Pointer pointer;
-  typedef Reference reference;
+struct iterator {
+  using iterator_category = Category;
+  using value_type = T;
+  using difference_type = ptrdiff_t;
+  using pointer = Pointer;
+  using reference = Reference;
 };
 
 template <typename Iterator>
-class iterator_traits {
+struct iterator_traits {
   typedef typename Iterator::iterator_category iterator_category;
   typedef typename Iterator::value_type value_type;
   typedef typename Iterator::difference_type difference_type;
@@ -31,7 +31,7 @@ class iterator_traits {
 };
 
 template <typename T>
-class iterator_traits<T *> {
+struct iterator_traits<T *> {
   typedef random_access_iterator_tag iterator_category;
   typedef T value_type;
   typedef ptrdiff_t difference_type;
@@ -40,7 +40,7 @@ class iterator_traits<T *> {
 };
 
 template <typename T>
-class iterator_traits<const T *> {
+struct iterator_traits<const T *> {
   typedef random_access_iterator_tag iterator_category;
   typedef T value_type;
   typedef ptrdiff_t difference_type;
@@ -53,6 +53,7 @@ inline typename iterator_traits<Iterator>::iterator_category
 __iterator_category(const Iterator &) {
   return typename iterator_traits<Iterator>::iterator_category();
 }
+
 }  // namespace tt
 
 #endif  // STL_ITERATOR_BASE_TYPES_H
