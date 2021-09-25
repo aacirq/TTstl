@@ -23,7 +23,7 @@ FetchContent_MakeAvailable(googletest)
 ##############################################
 enable_testing()
 
-add_subdirectory(test_cases)
+add_subdirectory(test)
 
 
 ##############################################
